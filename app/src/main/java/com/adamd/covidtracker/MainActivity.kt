@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 private const val BASE_URL = "https://covidtracking.com/api/v1/"
 private const val TAG = "MainActivity"
+private const val ALL_STATES = "All (Nationwide)"
 class MainActivity : AppCompatActivity() {
     private lateinit var currentlyShownData: List<CovidData>
     private lateinit var adapter: CovidSparkAdapter
@@ -76,8 +77,24 @@ class MainActivity : AppCompatActivity() {
                 perStateDailyData = statesData.reversed().groupBy { it.state }
                 Log.i(TAG, "update spinner with states data")
 //                todo update spinner with states data
+                updateSpinnerWithStateData(perStateDailyData.keys)
             }
         })
+    }
+
+    private fun updateSpinnerWithStateData(stateNames: Set<String>) {
+        val stateAbbreviationList = stateNames.toMutableList()
+        stateAbbreviationList.sort()
+        stateAbbreviationList.add(0, ALL_STATES)
+
+//        add state list as data source for the spinner
+        spinnerSelect.attachDataSource(stateAbbreviationList)
+        spinnerSelect.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
+            val selectedState = parent.getItemAtPosition(position) as String
+            val selectedData = perStateDailyData[selectedState] ?: nationalDailyData
+            updateDisplayWithData(selectedData)
+        }
+
     }
 
     private fun setupEventListeners() {
