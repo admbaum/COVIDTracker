@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.google.gson.GsonBuilder
+import com.robinhood.ticker.TickerUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.title = getString(R.string.app_description)
 
         val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
         val retrofit = Retrofit.Builder()
@@ -98,6 +100,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupEventListeners() {
+        tickerView.setCharacterLists(TickerUtils.provideNumberList())
 //        add a listener for the user scrubbing on the chart
         sparkView.isScrubEnabled = true
         sparkView.setScrubListener { itemData ->
@@ -131,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         @ColorInt val colorInt = ContextCompat.getColor(this, colorRes)
 //        update the color of the chart
         sparkView.lineColor = colorInt
-        tvMetricLabel.setTextColor(colorInt)
+        tickerView.setTextColor(colorInt)
 //        update the metric on the adapter
         adapter.metric = metric
         adapter.notifyDataSetChanged()
@@ -159,7 +162,7 @@ class MainActivity : AppCompatActivity() {
             Metric.POSITIVE -> covidData.positiveIncrease
             Metric.DEATH -> covidData.deathIncrease
         }
-        tvMetricLabel.text = NumberFormat.getInstance().format(numCases)
+        tickerView.text = NumberFormat.getInstance().format(numCases)
         val outputDateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
         tvDateLabel.text = outputDateFormat.format(covidData.dateChecked)
 

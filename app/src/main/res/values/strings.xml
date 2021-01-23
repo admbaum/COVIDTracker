@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">COVIDTracker</string>
+    <string name="app_description">COVID-19 Daily Cases</string>
 </resources>
